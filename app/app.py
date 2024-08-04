@@ -1,8 +1,9 @@
 import time
-import random
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
+
+from hh_vacancies import get_page_vacancies
 from models import Area, Employer, Vacancies 
 
 
@@ -21,45 +22,58 @@ def add_postg():
     print(engine)
 
     with Session(autoflush=False, bind=engine) as db:
-        # создаем компании
 
-        area = Area(name= 'Saransk',
-                     hh_id='123',
-                     url= 'http'
-                     )
-        print(area)
+        json_vacancies = get_page_vacancies(text='Python Simmbirsoft', page=0)
 
-        employer = Employer(name= 'Simbirsoft',
-                            hh_id='456',
-                            url= 'httpss'
-                            )
+        if json_vacancies:
+            print(json_vacancies)
+            for jv in json_vacancies['items']:    
+                print(jv)            
+                vacancie = Vacancies(
+                    name = jv['name'],
+                    hh_id = jv['id'],
+                    published_at = jv['published_at'],
+                    created_at = jv['created_at'],
+                    url = jv['url'],
+                )
+
+                area = Area(
+                    name= jv['area']['name'],
+                    hh_id= jv['area']['id'],
+                    url= jv['area']['url'],
+                )
+                print(*area)
+
+                employer = Employer(
+                    name= jv['employer']['name'],
+                    hh_id= jv['employer']['id'],
+                    url= jv['employer']['url'],
+                )
         
-        vacancie = Vacancies(
-            name = 'python developer',
-            hh_id = '56',
-            published_at = '------',
-            created_at = '------',
-            url = '------'
-        )
+        
 
-        vacancie.area = area
-        vacancie.employer = employer
+                vacancie.area = area
+                vacancie.employer = employer
 
-        # добавляем компании в базу данных, и вместе с ними добавляются пользователи
-        db.add_all([vacancie])
+                db.add_all([vacancie])
 
-        #db.add(area)
-        db.commit()
+                #db.add(area)
+                db.commit()
 
 
 
 if __name__ == '__main__':
-    while True:
+    time.sleep(5)
+    try:
+        add_postg()
+    except Exception as e: 
+        print('error', e)
+
         time.sleep(5)
-        try:
-            add_postg()
-        except Exception as e: 
-            print('error', e)
+    try:
+        add_postg()
+    except Exception as e: 
+        print('error', e)
             
 
 
