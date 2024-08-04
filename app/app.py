@@ -1,7 +1,10 @@
 import time
 import random
 
-import sqlalchemy as db
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
+from models import Area, Employer, Vacancies 
+
 
 db_name = 'database'
 db_user = 'username'
@@ -14,33 +17,45 @@ db_port = '5432'
 def add_postg():
     # Connecto to the database
     db_string = 'postgresql://{}:{}@{}:{}/{}'.format(db_user, db_pass, db_host, db_port, db_name)
-    engine = db.create_engine(db_string)
+    engine = create_engine(db_string)
     print(engine)
-    conn = engine.connect()
-    metadata = db.MetaData()
 
-    areas = db.Table('area_1', metadata, 
-    db.Column('id', db.BIGINT, primary_key=True, autoincrement=True),
-    db.Column('hh_id', db.Text),
-    db.Column('name', db.Text),
-    db.Column('url', db.Text)
-    )    
+    with Session(autoflush=False, bind=engine) as db:
+        # создаем компании
 
-    metadata.create_all(engine)
+        area = Area(name= 'Saransk',
+                     hh_id='123',
+                     url= 'http'
+                     )
+        print(area)
 
-    insertion_query_areas = areas.insert().values([
-    {'hh_id': '123456789', 'name': 'Dolgoprudny', 'url': 'http'},
-    {'hh_id': '012', 'name': 'dsghg', 'url': 'httpss'},
-    ])
+        employer = Employer(name= 'Simbirsoft',
+                            hh_id='456',
+                            url= 'httpss'
+                            )
+        
+        vacancie = Vacancies(
+            name = 'python developer',
+            hh_id = '56',
+            published_at = '------',
+            created_at = '------',
+            url = '------'
+        )
 
-    conn.execute(insertion_query_areas)
-    conn.commit()
+        vacancie.area = area
+        vacancie.employer = employer
+
+        # добавляем компании в базу данных, и вместе с ними добавляются пользователи
+        db.add_all([vacancie])
+
+        #db.add(area)
+        db.commit()
 
 
 
 if __name__ == '__main__':
     while True:
-        time.sleep(10)
+        time.sleep(5)
         try:
             add_postg()
         except Exception as e: 

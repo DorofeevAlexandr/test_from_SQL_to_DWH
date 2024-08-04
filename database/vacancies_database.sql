@@ -1,6 +1,6 @@
 --area
 CREATE TABLE IF NOT EXISTS area (
-    id uuid PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY key,
     hh_id TEXT NOT NULL,
     name TEXT NOT NULL,
     url TEXT
@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS area (
 
 --employer
 CREATE TABLE IF NOT EXISTS employer (
-    id uuid PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY key,
     hh_id TEXT NOT NULL,
     name TEXT NOT NULL,
     url TEXT
@@ -17,15 +17,14 @@ CREATE TABLE IF NOT EXISTS employer (
 
 --vacancies
 CREATE TABLE IF NOT EXISTS vacancies (
-    id uuid PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY key,
     hh_id TEXT NOT NULL,
     name TEXT NOT NULL,
-    area_id uuid REFERENCES area ON DELETE CASCADE,
-    employer_id uuid REFERENCES employer ON DELETE CASCADE,
+    area_id INTEGER REFERENCES area ON DELETE CASCADE,
+    employer_id INTEGER REFERENCES employer ON DELETE CASCADE,
     published_at TEXT,
     created_at TEXT,
     url TEXT
 );
 
 CREATE index IF NOT EXISTS vacancies_hh_id_idx ON vacancies(hh_id);
-
