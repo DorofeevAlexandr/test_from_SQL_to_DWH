@@ -26,12 +26,10 @@ def load_vacancies_save_postgres():
         for page in range(pages_count):
             json_vacancies = get_page_vacancies(text=SEARCH_REQUEST, page=page)
             if json_vacancies:
-                print(json_vacancies)
-                for jv in json_vacancies['items']:    
-                    print(jv)            
+                for jv in json_vacancies['items']:               
                     vacancie = copy_vacancie(jv)
                     db.add_all([vacancie])
-                    #db.add(area)
+                    #db.add(vacancie)
                     db.commit()
 
 

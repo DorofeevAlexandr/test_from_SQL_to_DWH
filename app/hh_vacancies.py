@@ -9,7 +9,7 @@ def get_page_vacancies(text, page):
     url = 'https://api.hh.ru/vacancies'
     params = {
         'text': text,
-        'per_page': 100,
+        'per_page': 10,
         'page': page
     }
     response = requests.get(url, params=params)
@@ -31,7 +31,6 @@ def copy_vacancie(in_json):
         hh_id= in_json['area']['id'],
         url= in_json['area']['url'],
     )
-    print(*area)
 
     employer = Employer(
         name= in_json['employer']['name'],
